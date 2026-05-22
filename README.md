@@ -1,117 +1,149 @@
-# 💡 LUMEN — E-commerce Premium
+<div align="center">
 
-> Plataforma de e-commerce full-stack com curadoria premium, design moderno e fluxos completos de compra, venda e administração.
+# 💡 LUMEN
 
+### Plataforma de e-commerce premium full-stack
+
+Curadoria de produtos com design moderno, fluxos completos de compra, venda e administração — inspirado em Apple, Linear e Stripe.
+
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-rodrigoruan2.github.io%2Flumen--ecommerce-18181b?style=for-the-badge)](https://rodrigoruan2.github.io/lumen-ecommerce/)
+[![Deploy](https://img.shields.io/github/actions/workflow/status/RodrigoRuan2/lumen-ecommerce/deploy-pages.yml?branch=main&style=for-the-badge&label=Deploy)](https://github.com/RodrigoRuan2/lumen-ecommerce/actions)
+[![License](https://img.shields.io/badge/license-MIT-3B9FD4?style=for-the-badge)](LICENSE)
+
+![Hero](docs/screenshots/home-light.png)
+
+</div>
+
+---
+
+## ✨ Highlights
+
+<table>
+  <tr>
+    <td width="50%">
+      <h4>🎨 Design system completo</h4>
+      <p>Tipografia <code>Inter</code> com letter-spacing negativo, paleta neutra zinc com acentos tonais, gradient mesh, sombras quase imperceptíveis e ícones SVG inline. Tema light/dark com transições suaves.</p>
+    </td>
+    <td width="50%">
+      <h4>🛒 Carrinho persistente por usuário</h4>
+      <p>Cada conta tem seu próprio carrinho mantido entre sessões — armazenado em <code>localStorage</code> namespaceado por user ID. Eventos custom sincronizam entre abas.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h4>👑 Workflow de aprovação de vendedores</h4>
+      <p>Cadastros de seller ficam <code>pending</code> com flag em JSONB. Middleware <code>isSeller</code> bloqueia criação de produtos. Admin aprova/rejeita em fila dedicada.</p>
+    </td>
+    <td>
+      <h4>💳 Pagamento PCI-safe</h4>
+      <p>Cartão salvo armazena apenas <strong>últimos 4 dígitos + bandeira + nome + validade</strong>. PAN completo e CVV nunca tocam o backend. Sanitização forçada server-side.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h4>📍 Loja física com mapa</h4>
+      <p>Vendedores cadastram endereço da loja com CEP autocompletado via ViaCEP. Geocoding via Nominatim/OpenStreetMap exibe localização na página do produto.</p>
+    </td>
+    <td>
+      <h4>🛡️ Segurança em camadas</h4>
+      <p>Helmet, rate limiting (10 logins/15min), CORS allowlist, política de senha forte, whitelist de campos em PUT, logs sem PII, regex Unicode anti-injection no search.</p>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 📸 Showcase
+
+### Home — light vs dark
+
+| Light | Dark |
+|:-----:|:----:|
+| ![Home Light](docs/screenshots/home-light.png) | ![Home Dark](docs/screenshots/home-dark.png) |
+
+### Grid de produtos
+![Products](docs/screenshots/products-grid.png)
+
+### Página do produto
+![Product Detail](docs/screenshots/product-detail.png)
+
+### Carrinho com mini-thumbs e preview de PIX
+![Cart](docs/screenshots/cart.png)
+
+### Painel do Administrador
+![Admin](docs/screenshots/admin-dashboard.png)
+
+### Mobile
 <p align="center">
-  <img src="docs/screenshots/home-light.png" alt="LUMEN — Home" width="80%" />
-</p>
-
-<p align="center">
-  <a href="#-features"><strong>Features</strong></a> ·
-  <a href="#-stack"><strong>Stack</strong></a> ·
-  <a href="#-rodando-localmente"><strong>Rodar local</strong></a> ·
-  <a href="#-contas-de-teste"><strong>Contas teste</strong></a> ·
-  <a href="#-screenshots"><strong>Screenshots</strong></a>
+  <img src="docs/screenshots/mobile-menu.png" alt="Mobile" width="320" />
 </p>
 
 ---
 
-## ✨ Features
+## 🧪 Contas de teste
 
-### 🛍️ Cliente
-- **Home com curadoria** — hero gradient, trust strip (frete grátis · devolução · segurança), grid responsivo de produtos
-- **Detalhes do produto** — galeria, badge de desconto, preço PIX (5% off), loja física do vendedor com mapa, avaliações
-- **Carrinho persistente por usuário** — cada conta tem seu próprio carrinho, mantido entre sessões
-- **Checkout em 3 etapas** — endereço com CEP autocompletado (ViaCEP), seleção de pagamento (cartão/PIX/boleto), confirmação com mapa
-- **Cartão salvo** — opcional, armazena apenas últimos 4 dígitos + bandeira (nunca PAN ou CVV)
-- **Wishlist** — coração no card persiste em localStorage
-- **Acompanhamento de pedido** — cancelar (até "processando"), confirmar entrega, solicitar devolução
-- **Perfil completo** — endereço com bairro/número/complemento/condomínio, telefone, foto
+> Já estão criadas no ambiente público. Acesse o [Live Demo](https://rodrigoruan2.github.io/lumen-ecommerce/) e use:
 
-### 🏪 Vendedor
-- **Aprovação por admin** — cadastros de seller ficam pendentes; só vendem após aprovação
-- **Dashboard com estatísticas** — produtos ativos, estoque, preço médio
-- **CRUD de produtos** — categoria, preço, estoque, descontos, imagens
-- **Pedidos da loja** — visualiza apenas pedidos com seus produtos, gerencia status (processando → enviado → devolvido)
-- **Loja física pública** — exibida na página dos produtos com mapa geolocalizado
+| Papel | Email | Senha |
+|:------|:------|:------|
+| 👤 **Cliente** | `cliente-teste@lumen.test` | `Senha12345` |
+| 🏪 **Vendedor (aprovado)** | `vendedor-teste@lumen.test` | `Senha12345` |
+| 👑 **Admin** | `admin-teste@lumen.test` | `Senha12345` |
 
-### 👑 Admin
-- **Painel completo** — produtos, pedidos, usuários, fila de aprovação de vendedores
-- **Stat cards tonais** — indicadores visuais por tom (azul/roxo/rosa/verde) com glow gradient
-- **Aprovação de vendedores** — fila de pendências, aprovar/rejeitar com um clique
-- **Gestão de roles** — promove/rebaixa entre customer/seller/admin
-- **Atualização de pedidos** — qualquer status, override de regras
+**Roteiro sugerido:**
 
-### 🎨 Design system
-- **Tema light/dark** com gradient mesh sutil
-- **Inter** com letter-spacing negativo (estilo Linear/Vercel/Stripe)
-- **28 ícones SVG inline** herdando cor via `currentColor`
-- **Skeleton loaders** com shimmer (substitui spinners)
-- **Microinterações** — `translateY(-1px)` no hover, transições com cubic-bezier
-- **Mobile menu** slide-in lateral com backdrop blur (estilo iOS)
+1. Entre como **Cliente** → adicione produtos → checkout completo (use endereço real, cartão `4111 1111 1111 1111`, marque "Salvar cartão")
+2. Saia e entre como **Admin** → aba "Aprovações" → veja a fila de vendedores pendentes
+3. Entre como **Vendedor** → tab "Minha Loja" → cadastre endereço da loja e veja aparecer na página dos seus produtos
+4. **Cadastre uma conta nova de vendedor** → observe que o app bloqueia criação de produtos até aprovação admin
 
----
-
-## 🛡️ Segurança
-
-- **Helmet** — headers HTTP de segurança (CSP, X-Frame-Options, etc)
-- **Rate limiting** — login (10/15min) e register (5/h) por IP
-- **Política de senha** — mínimo 8 chars, com letra + número
-- **JWT via Supabase Auth** com verificação a cada request
-- **Role-based access control** — middleware `isAdmin` e `isSeller`
-- **Whitelist em PUT /profile** — usuário não consegue alterar `role` nem `sellerApplication`
-- **Sanitização de query** — search com regex Unicode (anti PostgREST injection)
-- **CORS restrito** — origens permitidas via env var
-- **Logs sem PII** — apenas `error.name` e mensagem, sem stacks ou request body
-- **PCI-safe card storage** — apenas `last4 + brand + holderName + expiry`, nunca PAN ou CVV
+> ⚠️ Backend roda no free tier do Render — primeira request após 15min de idle leva ~50s pra acordar (cold start). Normal.
 
 ---
 
 ## 🧱 Stack
 
-**Frontend**
-- [React 18](https://react.dev/) + [Vite](https://vitejs.dev/)
-- [React Router 6](https://reactrouter.com/)
-- [React Leaflet](https://react-leaflet.js.org/) para mapas (Nominatim/OpenStreetMap)
-- CSS puro com variáveis (sem Tailwind, sem CSS-in-JS)
-
-**Backend**
-- [Node.js](https://nodejs.org/) + [Express](https://expressjs.com/)
-- [Supabase](https://supabase.com/) (Auth + Postgres)
-- [Helmet](https://helmetjs.github.io/) + [express-rate-limit](https://github.com/express-rate-limit/express-rate-limit)
-
-**Infra / APIs externas**
-- [ViaCEP](https://viacep.com.br/) — autocompletar CEP brasileiro
-- [Nominatim](https://nominatim.openstreetmap.org/) — geocoding para mapa de entrega
-
----
-
-## 📁 Estrutura
-
-```
-ecommerce/
-├── backend/
-│   └── src/
-│       ├── controllers/      # Lógica de negócio (auth, product, order)
-│       ├── routes/           # Endpoints (auth, products, orders, admin)
-│       ├── middleware/       # authenticate, isAdmin, isSeller
-│       ├── services/         # supabaseClient, mockData
-│       └── index.js          # Bootstrap Express
-│
-├── frontend/
-│   └── src/
-│       ├── pages/            # Home, ProductDetail, Cart, Checkout, Profile, Dashboards…
-│       ├── components/       # Header, Footer, ProductCard, Icon, Skeleton, DeliveryMap
-│       ├── context/          # CartContext (per-user)
-│       ├── utils/            # formatters, pricing, helpers
-│       └── styles/           # CSS por componente
-│
-├── supabase/
-│   └── migrations.sql        # Schema das tabelas (products, profiles, orders)
-│
-└── docs/
-    └── screenshots/          # Imagens do README
-```
+<table>
+  <tr>
+    <td><strong>Frontend</strong></td>
+    <td>
+      <a href="https://react.dev/">React 18</a> ·
+      <a href="https://vitejs.dev/">Vite 5</a> ·
+      <a href="https://reactrouter.com/">React Router 6</a> ·
+      <a href="https://react-leaflet.js.org/">React Leaflet</a> ·
+      CSS puro com variáveis
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Backend</strong></td>
+    <td>
+      <a href="https://nodejs.org/">Node.js 18+</a> ·
+      <a href="https://expressjs.com/">Express 4</a> ·
+      <a href="https://helmetjs.github.io/">Helmet</a> ·
+      <a href="https://github.com/express-rate-limit/express-rate-limit">express-rate-limit</a>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Database & Auth</strong></td>
+    <td>
+      <a href="https://supabase.com/">Supabase</a> (Postgres + Auth JWT)
+    </td>
+  </tr>
+  <tr>
+    <td><strong>APIs externas</strong></td>
+    <td>
+      <a href="https://viacep.com.br/">ViaCEP</a> (autocompletar CEP) ·
+      <a href="https://nominatim.openstreetmap.org/">Nominatim</a> (geocoding)
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Hosting</strong></td>
+    <td>
+      <a href="https://pages.github.com/">GitHub Pages</a> (frontend) ·
+      <a href="https://render.com/">Render</a> (backend)
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -129,18 +161,18 @@ cd lumen-ecommerce
 
 ### 2. Configure o Supabase
 - Crie um projeto novo em [supabase.com/dashboard](https://supabase.com/dashboard)
-- No SQL Editor, rode o conteúdo de [`supabase/migrations.sql`](./supabase/migrations.sql)
-- Em Project Settings → API, copie:
+- No **SQL Editor**, rode o conteúdo de [`supabase/migrations.sql`](./supabase/migrations.sql)
+- Em **Settings → API**, copie:
   - **Project URL**
-  - **Anon (public) Key**
-  - **Service role Key** ⚠️ secreta
+  - **Anon (public) key**
+  - **Service role key** ⚠️ secreta
 
 ### 3. Backend
 ```bash
 cd backend
 npm install
 cp .env.example .env
-# Edite .env com suas credenciais Supabase
+# Edite .env com SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY
 npm run dev
 ```
 API disponível em `http://localhost:5000`.
@@ -157,51 +189,51 @@ App disponível em `http://localhost:3000`.
 
 ---
 
-## 🧪 Contas de teste
+## 📁 Estrutura
 
-> ⚠️ Essas contas existem em ambiente público de demonstração apenas para fins de teste.
-> Em produção real, crie sua própria conta via cadastro.
-
-| Papel | Email | Senha |
-|-------|-------|-------|
-| 👤 **Cliente** | `cliente-teste@lumen.test` | `Senha12345` |
-| 🏪 **Vendedor (aprovado)** | `vendedor-teste@lumen.test` | `Senha12345` |
-| 👑 **Admin** | `admin-teste@lumen.test` | `Senha12345` |
-
-**Roteiro sugerido para explorar:**
-
-1. **Como Cliente** — adicione produtos ao carrinho, finalize checkout (use endereço fake, cartão `4111 1111 1111 1111`), marque "Salvar cartão"
-2. **Como Admin** → aba "Aprovações" — veja a fila de cadastros pendentes de vendedor
-3. **Como Vendedor aprovado** → "Minha Loja" → "Loja física" — cadastre um endereço de loja e veja-o aparecer na página dos produtos
-4. **Cadastre uma nova conta de vendedor** — observe que o fluxo bloqueia criação de produtos até admin aprovar
+```
+lumen-ecommerce/
+├── backend/
+│   └── src/
+│       ├── controllers/      # Lógica de negócio (auth, product, order)
+│       ├── routes/           # Endpoints REST
+│       ├── middleware/       # authenticate, isAdmin, isSeller
+│       ├── services/         # supabaseClient, mockData
+│       └── index.js
+│
+├── frontend/
+│   └── src/
+│       ├── pages/            # Home, ProductDetail, Cart, Checkout, Profile…
+│       ├── components/       # Header, ProductCard, Icon, Skeleton, DeliveryMap
+│       ├── context/          # CartContext (per-user storage)
+│       ├── utils/            # formatters, pricing, helpers
+│       └── styles/           # CSS por componente
+│
+├── supabase/
+│   └── migrations.sql        # Schema das tabelas
+│
+├── docs/screenshots/         # Imagens deste README
+│
+├── .github/workflows/
+│   └── deploy-pages.yml      # CI/CD do frontend
+│
+└── render.yaml               # Blueprint do backend
+```
 
 ---
 
-## 📸 Screenshots
+## 🛡️ Decisões de segurança
 
-### Home
-| Light | Dark |
-|-------|------|
-| ![Home Light](docs/screenshots/home-light.png) | ![Home Dark](docs/screenshots/home-dark.png) |
-
-### Catálogo de produtos
-![Products Grid](docs/screenshots/products-grid.png)
-
-### Detalhes do produto
-![Product Detail](docs/screenshots/product-detail.png)
-
-### Carrinho
-![Cart](docs/screenshots/cart.png)
-
-<!--
-### Painel do Admin
-![Admin Dashboard](docs/screenshots/admin-dashboard.png)
-
-### Mobile menu
-<p align="center">
-  <img src="docs/screenshots/mobile-menu.png" alt="Mobile menu" width="300" />
-</p>
--->
+- **JWT via Supabase Auth** verificado a cada request no middleware `authenticate`
+- **Role-based access control** com middlewares `isAdmin` e `isSeller`
+- **Whitelist em `PUT /auth/profile`** — usuário não consegue alterar `role`, `sellerApplication` nem expandir `savedCard` para guardar PAN
+- **Sanitização Unicode no search** — `[^\p{L}\p{N}\s]` previne PostgREST injection
+- **Rate limiting** em `/login` (10/15min) e `/register` (5/h) por IP
+- **Política de senha** — mínimo 8 caracteres, com letra e número
+- **Helmet** com `X-Frame-Options`, `X-Content-Type-Options`, etc
+- **CORS allowlist** via env var `FRONTEND_URL`
+- **Logs sem PII** — só `error.name` e mensagem, nunca request body, headers ou stack completo
+- **PCI-safe card storage** — `savedCard` é forçado a `{last4, brand, holderName, expiry}` server-side
 
 ---
 
@@ -211,4 +243,12 @@ MIT © [Rodrigo Ruan](https://github.com/RodrigoRuan2)
 
 ---
 
-<sub>Construído com 💡 como projeto de portfólio. Inspirado em Amazon, Mercado Livre e princípios de design da Apple/Linear/Stripe.</sub>
+<div align="center">
+  <sub>Construído com 💡 como projeto de portfólio.</sub>
+  <br />
+  <sub>
+    <a href="https://rodrigoruan2.github.io/lumen-ecommerce/">Live Demo</a> ·
+    <a href="https://github.com/RodrigoRuan2/lumen-ecommerce/issues">Reportar bug</a> ·
+    <a href="https://github.com/RodrigoRuan2/lumen-ecommerce/issues">Sugerir feature</a>
+  </sub>
+</div>
