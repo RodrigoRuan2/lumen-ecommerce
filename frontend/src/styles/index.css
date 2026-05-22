@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  /* Base */
+  --bg-color: #ffffff;
+  --surface-color: #ffffff;
+  --section-color: #fafafa;
+  --header-bg: #ffffff;
+  --footer-bg: #18181b;
+
+  /* Borders */
+  --border-color: #e7e7e7;
+  --border-strong: #d4d4d4;
+  --footer-border: #27272a;
+
+  /* Text */
+  --text-color: #18181b;
+  --text-secondary: #52525b;
+  --muted-color: #71717a;
+
+  /* Accent — preto sofisticado estilo Apple */
+  --primary-color: #18181b;
+  --secondary-color: #52525b;
+  --accent-color: #18181b;
+  --accent-strong: #000000;
+
+  /* Brand */
+  --brand-color: #3B9FD4;
+  --brand-strong: #2d87b8;
+  --shipped-color: #6366f1;
+
+  /* Status */
+  --success-color: #16a34a;
+  --danger-color: #dc2626;
+  --warning-color: #d97706;
+
+  /* Shadows — quase imperceptíveis */
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.08);
+
+  /* Radius — mais sutil */
+  --border-radius: 8px;
+  --border-radius-sm: 4px;
+  --border-radius-lg: 16px;
+}
+
+body.theme-dark {
+  --bg-color: #0a0a0a;
+  --surface-color: #131313;
+  --section-color: #1a1a1a;
+  --header-bg: #0a0a0a;
+  --footer-bg: #000000;
+
+  --border-color: #262626;
+  --border-strong: #404040;
+  --footer-border: #1a1a1a;
+
+  --text-color: #fafafa;
+  --text-secondary: #a1a1aa;
+  --muted-color: #71717a;
+
+  --primary-color: #fafafa;
+  --secondary-color: #a1a1aa;
+  --accent-color: #fafafa;
+  --accent-strong: #ffffff;
+
+  --success-color: #22c55e;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  letter-spacing: -0.011em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 48px 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: all 0.2s ease;
+  background: none;
+  color: inherit;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  color: var(--bg-color);
+  border: none;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--accent-strong);
+  transform: translateY(-1px);
+  opacity: 1;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-strong);
+}
+
+.btn-secondary:hover {
+  background-color: var(--section-color);
+  opacity: 1;
+}
+
+input,
+textarea,
+select {
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  font-family: inherit;
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--text-color);
+  box-shadow: 0 0 0 3px rgba(24, 24, 27, 0.08);
+}
+
+body.theme-dark input:focus,
+body.theme-dark textarea:focus,
+body.theme-dark select:focus {
+  box-shadow: 0 0 0 3px rgba(250, 250, 250, 0.1);
+}
+
+a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.7;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+::selection {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+}
+
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+  .main-content { padding: 24px 16px; }
+}
