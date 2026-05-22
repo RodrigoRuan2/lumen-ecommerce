@@ -193,6 +193,7 @@ App disponível em `http://localhost:3000`.
 ### Carrinho
 ![Cart](docs/screenshots/cart.png)
 
+<!--
 ### Painel do Admin
 ![Admin Dashboard](docs/screenshots/admin-dashboard.png)
 
@@ -200,6 +201,7 @@ App disponível em `http://localhost:3000`.
 <p align="center">
   <img src="docs/screenshots/mobile-menu.png" alt="Mobile menu" width="300" />
 </p>
+-->
 
 ---
 
