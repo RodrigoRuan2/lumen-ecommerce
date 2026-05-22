@@ -58,8 +58,9 @@ body.theme-dark .hero-gradient {
   font-size: 4.5rem;
   font-weight: 700;
   letter-spacing: -0.04em;
-  line-height: 1.02;
+  line-height: 1.15;
   color: var(--text-color);
+  padding-bottom: 4px;
 }
 
 .hero-title em {
@@ -69,6 +70,8 @@ body.theme-dark .hero-gradient {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  display: inline-block;
+  padding: 0 4px;
 }
 
 .hero-subtitle {
