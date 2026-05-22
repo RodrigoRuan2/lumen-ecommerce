@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const API_URL = '/api'
+// Em dev: usa proxy do Vite ('/api' -> localhost:5000)
+// Em prod: usa VITE_API_URL (ex: https://lumen-backend.onrender.com/api)
+const API_URL = import.meta.env.VITE_API_URL || '/api'
 
 const api = axios.create({
   baseURL: API_URL,

@@ -23,7 +23,8 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         setLoading(true)
-        const res = await fetch(`/api/products/${id}`)
+        const apiBase = import.meta.env.VITE_API_URL || '/api'
+        const res = await fetch(`${apiBase}/products/${id}`)
         const data = await res.json()
         if (data.success) {
           setProduct(data.product)

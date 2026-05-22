@@ -7,9 +7,14 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const rootDir = resolve(__dirname)
 
+// Em GitHub Pages o app fica em https://<user>.github.io/<repo>/
+// VITE_BASE permite controlar via env (default: '/' para dev local).
+const base = process.env.VITE_BASE || '/'
+
 export default defineConfig({
   root: rootDir,
   envDir: rootDir,
+  base,
   plugins: [react()],
   server: {
     port: 3000,

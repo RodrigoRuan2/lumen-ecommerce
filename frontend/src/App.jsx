@@ -13,8 +13,11 @@ import AdminDashboard from './pages/AdminDashboard'
 import SellerDashboard from './pages/SellerDashboard'
 
 function App() {
+  // Em GitHub Pages a app fica em /<repo>/ — usa o mesmo basename do Vite base
+  const basename = import.meta.env.BASE_URL?.replace(/\/$/, '') || ''
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <CartProvider>
         <div className="app-container">
           <Header />

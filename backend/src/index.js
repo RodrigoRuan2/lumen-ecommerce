@@ -15,10 +15,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+// FRONTEND_URL aceita múltiplas origens separadas por vírgula
+// (ex: "https://rodrigoruan2.github.io,https://lumen.vercel.app")
 const ALLOWED_ORIGINS = [
   'http://localhost:3000',
   'http://localhost:4173',
-  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [])
+  ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',').map(s => s.trim()).filter(Boolean) : [])
 ]
 
 // Headers de segurança HTTP (X-Frame-Options, X-Content-Type-Options, etc).

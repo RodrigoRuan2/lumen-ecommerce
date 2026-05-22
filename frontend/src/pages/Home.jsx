@@ -36,7 +36,8 @@ export default function Home() {
       if (category) query.append('category', category)
       if (search) query.append('search', search)
 
-      const response = await fetch(`/api/products?${query}`)
+      const apiBase = import.meta.env.VITE_API_URL || '/api'
+      const response = await fetch(`${apiBase}/products?${query}`)
       const data = await response.json()
 
       if (data.success) setProducts(data.products)

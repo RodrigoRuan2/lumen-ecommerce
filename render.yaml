@@ -1,0 +1,22 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Para usar: crie um Blueprint Instance em render.com apontando para este repo.
+# Depois preencha SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY e FRONTEND_URL no dashboard.
+
+services:
+  - type: web
+    name: lumen-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: false        # preenche manualmente no dashboard
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false        # preenche manualmente no dashboard
+      - key: FRONTEND_URL
+        value: https://rodrigoruan2.github.io
