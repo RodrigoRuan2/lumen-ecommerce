@@ -26,6 +26,7 @@ export default function Header() {
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem('user') || 'null') } catch { return null }
   })
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem('token'))
   const [searchQuery, setSearchQuery] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -34,9 +35,26 @@ export default function Header() {
   const location = useLocation()
   const dropdownRef = useRef(null)
 
-  const isLoggedIn = !!localStorage.getItem('token')
   const isAdmin = user?.role === 'admin'
   const isSeller = user?.role === 'seller'
+
+  // Reage a login/logout em qualquer parte do app (dispara via 'auth-change')
+  useEffect(() => {
+    const refresh = () => {
+      try {
+        setUser(JSON.parse(localStorage.getItem('user') || 'null'))
+      } catch {
+        setUser(null)
+      }
+      setIsLoggedIn(!!localStorage.getItem('token'))
+    }
+    window.addEventListener('auth-change', refresh)
+    window.addEventListener('storage', refresh)
+    return () => {
+      window.removeEventListener('auth-change', refresh)
+      window.removeEventListener('storage', refresh)
+    }
+  }, [])
 
   useEffect(() => {
     document.body.classList.remove('theme-light', 'theme-dark')

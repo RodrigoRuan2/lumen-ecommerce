@@ -27,6 +27,11 @@ export const register = async (req, res) => {
 
     if (error) {
       console.error('[register] Supabase createUser error:', error.message);
+      // Detecta erro de email duplicado e mensagem amigavel
+      const msg = (error.message || '').toLowerCase();
+      if (msg.includes('already') || msg.includes('exist') || msg.includes('registered') || msg.includes('duplicate')) {
+        return res.status(409).json({ success: false, message: 'Este email já está cadastrado. Faça login ou use outro email.' });
+      }
       return res.status(400).json({ success: false, message: 'Não foi possível criar a conta. Verifique os dados e tente novamente.' });
     }
 

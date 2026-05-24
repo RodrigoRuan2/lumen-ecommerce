@@ -4,11 +4,16 @@
   overflow: hidden;
   border: 1px solid var(--border-color);
   background: var(--section-color);
+  /* Cria stacking context para conter os z-index altos do Leaflet (panes ate 700, controls ate 1000) */
+  isolation: isolate;
+  z-index: 0;
 }
 
 .leaflet-container {
   font-family: 'Inter', -apple-system, sans-serif;
   background: var(--section-color) !important;
+  /* Reforco: container ja fica em stacking context proprio dentro do wrapper */
+  z-index: 0;
 }
 
 .leaflet-popup-content-wrapper {

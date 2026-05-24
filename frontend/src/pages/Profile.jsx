@@ -217,9 +217,26 @@ export default function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setSaving(true)
     setMessage('')
     setError('')
+
+    // Validações antes de enviar
+    const phoneDigits = (profile.phone || '').replace(/\D/g, '')
+    if (profile.phone && phoneDigits.length > 0 && (phoneDigits.length < 10 || phoneDigits.length > 11)) {
+      setError('Telefone precisa ter 10 ou 11 dígitos')
+      return
+    }
+    const cepDigits = (profile.address.zipCode || '').replace(/\D/g, '')
+    if (profile.address.zipCode && cepDigits.length > 0 && cepDigits.length !== 8) {
+      setError('CEP precisa ter 8 dígitos')
+      return
+    }
+    if (profile.address.state && profile.address.state.length !== 2) {
+      setError('Estado precisa ter 2 letras (UF)')
+      return
+    }
+
+    setSaving(true)
     try {
       // Mescla campos editados com os preservados (savedCard, store, sellerApplication, etc)
       const mergedAddress = { ...fullAddress, ...profile.address }

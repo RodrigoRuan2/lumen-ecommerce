@@ -4,7 +4,8 @@
   padding: 12px 0;
   position: sticky;
   top: 0;
-  z-index: 100;
+  /* Acima do Leaflet controls (1000) para nao ser sobreposto pelo mapa */
+  z-index: 1100;
   backdrop-filter: saturate(180%) blur(20px);
 }
 
@@ -222,7 +223,7 @@
   box-shadow: 0 8px 24px rgba(0,0,0,0.1);
   min-width: 160px;
   overflow: hidden;
-  z-index: 200;
+  z-index: 1150;
 }
 
 .dropdown-item {
@@ -306,7 +307,8 @@
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.4);
-  z-index: 99;
+  /* Acima do Leaflet (1000) e do header (1100) */
+  z-index: 1200;
   backdrop-filter: blur(2px);
 }
 

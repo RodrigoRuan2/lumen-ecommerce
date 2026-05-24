@@ -102,10 +102,13 @@ export default function Checkout() {
 
   const validateAddress = () => {
     const errs = {}
-    if (!address.street.trim()) errs.street = 'Endereço obrigatório'
-    if (!address.city.trim()) errs.city = 'Cidade obrigatória'
-    if (!address.state.trim()) errs.state = 'Estado obrigatório'
+    const cepDigits = address.zipCode.replace(/\D/g, '')
     if (!address.zipCode.trim()) errs.zipCode = 'CEP obrigatório'
+    else if (cepDigits.length !== 8) errs.zipCode = 'CEP precisa ter 8 dígitos'
+    if (!address.street.trim()) errs.street = 'Endereço obrigatório'
+    if (!address.number.trim()) errs.number = 'Número obrigatório'
+    if (!address.city.trim()) errs.city = 'Cidade obrigatória'
+    if (!address.state.trim() || address.state.length !== 2) errs.state = 'Estado precisa ter 2 letras (UF)'
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
