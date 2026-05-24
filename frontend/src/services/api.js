@@ -33,7 +33,9 @@ api.interceptors.response.use(
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.dispatchEvent(new Event('auth-change'))
-      window.location.href = '/login'
+      // Respeita BASE_URL do Vite para funcionar em subpath (GitHub Pages)
+      const base = import.meta.env.BASE_URL || '/'
+      window.location.href = base.endsWith('/') ? base + 'login' : base + '/login'
     }
     return Promise.reject(error)
   }

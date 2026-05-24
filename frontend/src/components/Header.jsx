@@ -81,7 +81,8 @@ export default function Header() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     window.dispatchEvent(new Event('auth-change'))
-    window.location.href = '/'
+    // Usa BASE_URL para respeitar o subpath do GitHub Pages (/lumen-ecommerce/)
+    window.location.href = import.meta.env.BASE_URL || '/'
   }
 
   const handleSearch = (e) => {
