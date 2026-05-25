@@ -306,14 +306,15 @@
   justify-content: center;
   gap: 8px;
   flex: 1;
-  min-width: 160px;
-  padding: 14px 24px;
+  min-width: 180px;
+  padding: 14px 20px;
   font-size: 0.95rem;
   font-weight: 500;
   border-radius: 100px;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .btn-add-cart {

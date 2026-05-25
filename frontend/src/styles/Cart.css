@@ -68,8 +68,8 @@
 
 .cart-layout {
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 48px;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 32px;
   align-items: start;
 }
 
@@ -412,6 +412,13 @@
 .btn-continue:hover {
   color: var(--text-color);
   opacity: 1;
+}
+
+@media (max-width: 960px) {
+  .cart-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
 }
 
 @media (max-width: 768px) {

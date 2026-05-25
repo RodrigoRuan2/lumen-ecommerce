@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../services/api.js'
-import { formatPhone, formatCEP, fetchAddressByCEP, sanitizeName, sanitizeUF } from '../utils/formatters.js'
+import { formatPhone, formatCEP, fetchAddressByCEP, sanitizeName, sanitizeUF, formatBRL } from '../utils/formatters.js'
 import DeliveryMap from '../components/DeliveryMap.jsx'
 import Icon from '../components/Icon.jsx'
 import '../styles/Profile.css'
@@ -58,7 +58,7 @@ function OrderCard({ order, onStatusChange }) {
             <span className="order-item-name">{item.name || item.productId?.name || 'Produto'}</span>
             <span className="order-item-qty">× {item.quantity}</span>
             <span className="order-item-price">
-              R$ {(item.price * item.quantity)?.toFixed(2) || '0.00'}
+              {formatBRL(item.price * item.quantity)}
             </span>
           </div>
         ))}
@@ -66,10 +66,17 @@ function OrderCard({ order, onStatusChange }) {
 
       <div className="order-card-footer">
         <div className="order-shipping">
-          <span>Entrega: {order.shippingAddress?.street}, {order.shippingAddress?.city}</span>
+          {(() => {
+            const parts = [order.shippingAddress?.street, order.shippingAddress?.city]
+              .map(s => (s || '').toString().trim())
+              .filter(s => s && s !== '0')
+            return parts.length
+              ? <span>Entrega: {parts.join(', ')}</span>
+              : <span style={{ fontStyle: 'italic', opacity: 0.7 }}>Endereço não informado</span>
+          })()}
         </div>
         <div className="order-total">
-          Total: <strong>R$ {order.totalPrice?.toFixed(2)}</strong>
+          Total: <strong>{formatBRL(order.totalPrice)}</strong>
         </div>
       </div>
 

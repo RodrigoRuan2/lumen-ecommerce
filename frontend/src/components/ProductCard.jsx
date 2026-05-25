@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
-import { renderStars } from '../utils/formatters.js'
+import { renderStars, formatBRL } from '../utils/formatters.js'
 import Icon from './Icon'
 import '../styles/ProductCard.css'
 
@@ -87,9 +87,9 @@ export default function ProductCard({ product }) {
         )}
 
         <div className="product-price">
-          <span className="current-price">R$ {product.price?.toFixed(2)}</span>
+          <span className="current-price">{formatBRL(product.price)}</span>
           {discountPct && (
-            <span className="original-price">R$ {product.originalPrice?.toFixed(2)}</span>
+            <span className="original-price">{formatBRL(product.originalPrice)}</span>
           )}
         </div>
 

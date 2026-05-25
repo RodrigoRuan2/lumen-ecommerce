@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import api from '../services/api.js'
-import { formatCEP, fetchAddressByCEP, detectCardBrand, sanitizeName, sanitizeUF } from '../utils/formatters.js'
+import { formatCEP, fetchAddressByCEP, detectCardBrand, sanitizeName, sanitizeUF, formatBRL } from '../utils/formatters.js'
 import { calculateShipping, PIX_DISCOUNT } from '../utils/pricing.js'
 import DeliveryMap from '../components/DeliveryMap.jsx'
 import Icon from '../components/Icon.jsx'
@@ -453,7 +453,7 @@ export default function Checkout() {
                     >
                       {[1, 2, 3, 6, 12].map(n => (
                         <option key={n} value={n}>
-                          {n}x de R$ {(total / n).toFixed(2)}{n === 1 ? ' (sem juros)' : ' sem juros'}
+                          {n}x de {formatBRL(total / n)}{n === 1 ? ' (sem juros)' : ' sem juros'}
                         </option>
                       ))}
                     </select>
@@ -499,7 +499,7 @@ export default function Checkout() {
                 {cart.map(item => (
                   <div key={item._id} className="confirm-item">
                     <span>{item.name} × {item.quantity}</span>
-                    <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
+                    <span>{formatBRL(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
@@ -553,27 +553,27 @@ export default function Checkout() {
             <div key={item._id} className="summary-item">
               <span className="summary-item-name">{item.name}</span>
               <span>×{item.quantity}</span>
-              <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
+              <span>{formatBRL(item.price * item.quantity)}</span>
             </div>
           ))}
           <div className="summary-divider" />
           <div className="summary-line-sm">
-            <span>Subtotal</span><span>R$ {totalPrice.toFixed(2)}</span>
+            <span>Subtotal</span><span>{formatBRL(totalPrice)}</span>
           </div>
           {pixDiscount > 0 && (
             <div className="summary-line-sm" style={{ color: 'var(--success-color)' }}>
-              <span>Desconto PIX (5%)</span><span>- R$ {pixDiscount.toFixed(2)}</span>
+              <span>Desconto PIX (5%)</span><span>- {formatBRL(pixDiscount)}</span>
             </div>
           )}
           <div className="summary-line-sm">
             <span>Frete</span>
             <span className={shipping === 0 ? 'free-shipping' : ''}>
-              {shipping === 0 ? 'Grátis' : `R$ ${shipping.toFixed(2)}`}
+              {shipping === 0 ? 'Grátis' : formatBRL(shipping)}
             </span>
           </div>
           <div className="summary-divider" />
           <div className="summary-total-sm">
-            <span>Total</span><span>R$ {total.toFixed(2)}</span>
+            <span>Total</span><span>{formatBRL(total)}</span>
           </div>
         </div>
       </div>

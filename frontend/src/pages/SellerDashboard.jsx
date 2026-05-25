@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../services/api.js'
-import { capitalize, formatCEP, fetchAddressByCEP, sanitizeName, sanitizeUF } from '../utils/formatters.js'
+import { capitalize, formatCEP, fetchAddressByCEP, sanitizeName, sanitizeUF, formatBRL } from '../utils/formatters.js'
 import DeliveryMap from '../components/DeliveryMap.jsx'
 import Icon from '../components/Icon.jsx'
 import '../styles/Dashboard.css'
@@ -247,7 +247,7 @@ export default function SellerDashboard() {
         </div>
         <div className="stat-card stat-tone-green">
           <div className="stat-icon-box"><Icon name="tag" size={20} /></div>
-          <div className="stat-value">R$ {avgPrice.toFixed(2)}</div>
+          <div className="stat-value">{formatBRL(avgPrice)}</div>
           <div className="stat-label">Preço Médio</div>
         </div>
       </div>
@@ -285,7 +285,7 @@ export default function SellerDashboard() {
                         <div key={i} className="order-item-row">
                           <span className="order-item-name">{item.name || 'Produto'}</span>
                           <span className="order-item-qty">× {item.quantity}</span>
-                          <span className="order-item-price">R$ {(item.price * item.quantity)?.toFixed(2)}</span>
+                          <span className="order-item-price">{formatBRL(item.price * item.quantity)}</span>
                         </div>
                       ))}
                     </div>
@@ -565,7 +565,7 @@ export default function SellerDashboard() {
                 <div className="seller-product-info">
                   <h4>{p.name}</h4>
                   <span className="badge">{p.category}</span>
-                  <div className="seller-product-price">R$ {p.price?.toFixed(2)}</div>
+                  <div className="seller-product-price">{formatBRL(p.price)}</div>
                   <div className={`seller-product-stock ${p.stock === 0 ? 'stock-zero' : ''}`}>
                     Estoque: {p.stock}
                   </div>

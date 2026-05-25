@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
-import { renderStars } from '../utils/formatters.js'
+import { renderStars, formatBRL } from '../utils/formatters.js'
 import { pixPrice, FREE_SHIPPING_MIN } from '../utils/pricing.js'
 import DeliveryMap from '../components/DeliveryMap.jsx'
 import Icon from '../components/Icon.jsx'
@@ -113,9 +113,9 @@ export default function ProductDetail() {
           </div>
 
           <div className="detail-price-block">
-            <span className="detail-price">R$ {product.price?.toFixed(2)}</span>
+            <span className="detail-price">{formatBRL(product.price)}</span>
             {discount && (
-              <span className="detail-original-price">R$ {product.originalPrice?.toFixed(2)}</span>
+              <span className="detail-original-price">{formatBRL(product.originalPrice)}</span>
             )}
             {discount && <span className="detail-discount">{discount}% OFF</span>}
           </div>
@@ -123,14 +123,14 @@ export default function ProductDetail() {
           <p className="pix-hint-detail">
             <span className="pix-hint-bolt">⚡</span>
             <span>
-              <strong>R$ {pixPrice(product.price).toFixed(2)}</strong> no PIX
+              <strong>{formatBRL(pixPrice(product.price))}</strong> no PIX
               <span className="pix-hint-badge">5% off</span>
             </span>
           </p>
 
           {discount && (
             <p className="installment-hint">
-              ou 12x de R$ {(product.price / 12).toFixed(2)} sem juros
+              ou 12x de {formatBRL(product.price / 12)} sem juros
             </p>
           )}
 

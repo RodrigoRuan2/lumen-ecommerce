@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../services/api.js'
-import { capitalize } from '../utils/formatters.js'
+import { capitalize, formatBRL } from '../utils/formatters.js'
 import Icon from '../components/Icon.jsx'
 import '../styles/Dashboard.css'
 
@@ -222,7 +222,7 @@ export default function AdminDashboard() {
           </div>
           <div className="stat-card stat-tone-green">
             <div className="stat-icon-box"><Icon name="money" size={20} /></div>
-            <div className="stat-value">R$ {stats.revenue.toFixed(2)}</div>
+            <div className="stat-value">{formatBRL(stats.revenue)}</div>
             <div className="stat-label">Receita Total</div>
           </div>
           {applications.length > 0 && (
@@ -380,7 +380,7 @@ export default function AdminDashboard() {
                       </div>
                     </td>
                     <td><span className="badge">{p.category}</span></td>
-                    <td>R$ {p.price?.toFixed(2)}</td>
+                    <td>{formatBRL(p.price)}</td>
                     <td>
                       <span className={p.stock > 0 ? 'badge-success' : 'badge-danger'}>
                         {p.stock}
@@ -418,7 +418,7 @@ export default function AdminDashboard() {
                 {orders.map(o => (
                   <tr key={o._id}>
                     <td className="id-cell">#{o._id?.slice(-6)?.toUpperCase()}</td>
-                    <td>R$ {o.totalPrice?.toFixed(2)}</td>
+                    <td>{formatBRL(o.totalPrice)}</td>
                     <td><span className={`status-badge status-${o.status}`}>{ORDER_STATUS[o.status] || o.status}</span></td>
                     <td>{o.createdAt ? new Date(o.createdAt).toLocaleDateString('pt-BR') : '-'}</td>
                     <td>

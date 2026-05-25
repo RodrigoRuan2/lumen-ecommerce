@@ -1,3 +1,14 @@
+// Formata valor em BRL: 819776 -> "R$ 819.776,00"
+export function formatBRL(value) {
+  const num = Number(value) || 0
+  return num.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+}
+
 // Formatação de telefone BR: (XX) XXXXX-XXXX (celular) ou (XX) XXXX-XXXX (fixo)
 export function formatPhone(value) {
   const digits = (value || '').replace(/\D/g, '').slice(0, 11)

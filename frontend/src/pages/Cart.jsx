@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { calculateShipping, freeShippingRemaining, freeShippingProgress, pixPrice, FREE_SHIPPING_MIN } from '../utils/pricing.js'
+import { formatBRL } from '../utils/formatters.js'
 import Icon from '../components/Icon'
 import '../styles/Cart.css'
 
@@ -52,7 +53,7 @@ export default function Cart() {
               <div className="cart-item-info">
                 <Link to={`/produto/${item._id}`} className="cart-item-name">{item.name}</Link>
                 <span className="cart-item-category">{item.category}</span>
-                <span className="cart-item-unit-price">R$ {item.price?.toFixed(2)} / unid.</span>
+                <span className="cart-item-unit-price">{formatBRL(item.price)} / unid.</span>
               </div>
 
               <div className="cart-item-qty">
@@ -62,7 +63,7 @@ export default function Cart() {
               </div>
 
               <div className="cart-item-subtotal">
-                R$ {(item.price * item.quantity).toFixed(2)}
+                {formatBRL(item.price * item.quantity)}
               </div>
 
               <button
@@ -96,13 +97,13 @@ export default function Cart() {
 
           <div className="summary-line">
             <span>Subtotal ({totalItems} item{totalItems !== 1 ? 's' : ''})</span>
-            <span>R$ {totalPrice.toFixed(2)}</span>
+            <span>{formatBRL(totalPrice)}</span>
           </div>
 
           <div className="summary-line">
             <span>Frete</span>
             <span className={calculateShipping(totalPrice) === 0 ? 'free-shipping' : ''}>
-              {calculateShipping(totalPrice) === 0 ? 'Grátis' : `R$ ${calculateShipping(totalPrice).toFixed(2)}`}
+              {calculateShipping(totalPrice) === 0 ? 'Grátis' : formatBRL(calculateShipping(totalPrice))}
             </span>
           </div>
 
@@ -115,7 +116,7 @@ export default function Cart() {
                 />
               </div>
               <p className="shipping-progress-text">
-                Falta <strong>R$ {freeShippingRemaining(totalPrice).toFixed(2)}</strong> para frete grátis
+                Falta <strong>{formatBRL(freeShippingRemaining(totalPrice))}</strong> para frete grátis
               </p>
             </div>
           ) : (
@@ -128,13 +129,13 @@ export default function Cart() {
 
           <div className="summary-total">
             <span>Total</span>
-            <span>R$ {(totalPrice + calculateShipping(totalPrice)).toFixed(2)}</span>
+            <span>{formatBRL(totalPrice + calculateShipping(totalPrice))}</span>
           </div>
 
           <div className="pix-preview">
             <span className="pix-preview-label">⚡ No PIX</span>
             <span className="pix-preview-price">
-              R$ {pixPrice(totalPrice + calculateShipping(totalPrice)).toFixed(2)}
+              {formatBRL(pixPrice(totalPrice + calculateShipping(totalPrice)))}
               <span className="pix-preview-discount">5% off</span>
             </span>
           </div>
