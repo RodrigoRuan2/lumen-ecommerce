@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -16,80 +16,73 @@ const customIcon = L.divIcon({
   popupAnchor: [0, -32]
 })
 
-// Cache simples para não geocodificar o mesmo endereço duas vezes
+// Cache de geocoding em memoria do frontend (vida = sessao)
+// Backend tambem cacheia em memoria por 24h.
 const geocodeCache = new Map()
+
+const API_BASE = import.meta.env.VITE_API_URL || '/api'
 
 async function tryGeocode(query) {
   try {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=br`
-    const res = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } })
+    const res = await fetch(`${API_BASE}/geocode?q=${encodeURIComponent(query)}`)
+    if (!res.ok) return null
     const data = await res.json()
-    if (data?.[0]) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }
+    if (data?.success && data.result) return { lat: data.result.lat, lng: data.result.lng }
   } catch {
     /* ignora */
   }
   return null
 }
 
-// Tenta encontrar a localizacao mais precisa possivel:
-// 1. street + number + city + state (mais preciso)
-// 2. street + city + state (sem numero)
-// 3. CEP isolado (Brasil tem boa cobertura por CEP)
-// 4. cidade + estado (fallback aproximado)
+// Estrategia conservadora: UMA tentativa por geocode.
+// Prioriza a query mais provavel de retornar resultado preciso.
 async function geocodeAddress({ street, number, city, state, zipCode, country = 'Brasil' }) {
-  const cacheKey = JSON.stringify({ street, number, city, state, zipCode })
-  if (geocodeCache.has(cacheKey)) return geocodeCache.get(cacheKey)
-
   const cleanStreet = (street || '').trim()
   const cleanNumber = (number || '').trim()
   const cleanCity = (city || '').trim()
   const cleanState = (state || '').trim()
-  const cleanCEP = (zipCode || '').trim()
+  const cleanCEP = (zipCode || '').replace(/\D/g, '')
 
-  if (!cleanStreet && !cleanCity && !cleanCEP) return null
+  if (!cleanStreet && !cleanCity && cleanCEP.length !== 8) return null
 
-  let result = null
+  const cacheKey = JSON.stringify({ cleanStreet, cleanNumber, cleanCity, cleanState, cleanCEP })
+  if (geocodeCache.has(cacheKey)) return geocodeCache.get(cacheKey)
 
-  // 1. Mais preciso: rua + numero + cidade + estado
+  // Monta a melhor query disponivel em UMA chamada
+  let query
+  let approximate = false
+
   if (cleanStreet && cleanCity) {
-    const q = [
+    // Rua + numero + cidade + estado: mais preciso
+    query = [
       cleanStreet + (cleanNumber ? ', ' + cleanNumber : ''),
       cleanCity,
       cleanState,
       country
     ].filter(Boolean).join(', ')
-    result = await tryGeocode(q)
-    if (result) result.approximate = false
+  } else if (cleanCEP.length === 8) {
+    // Apenas CEP: Nominatim tem boa cobertura por CEP brasileiro
+    query = `${cleanCEP.slice(0, 5)}-${cleanCEP.slice(5)}, ${country}`
+  } else if (cleanCity) {
+    // Apenas cidade: aproximado
+    query = [cleanCity, cleanState, country].filter(Boolean).join(', ')
+    approximate = true
+  } else {
+    return null
   }
 
-  // 2. Sem numero: rua + cidade + estado
-  if (!result && cleanStreet && cleanCity) {
-    const q = [cleanStreet, cleanCity, cleanState, country].filter(Boolean).join(', ')
-    result = await tryGeocode(q)
-    if (result) result.approximate = false
+  const result = await tryGeocode(query)
+  if (result) {
+    result.approximate = approximate
+    geocodeCache.set(cacheKey, result)
   }
-
-  // 3. Pelo CEP (Nominatim suporta postalcode no Brasil em casos comuns)
-  if (!result && cleanCEP && cleanCEP.replace(/\D/g, '').length === 8) {
-    const q = cleanCEP + ', ' + country
-    result = await tryGeocode(q)
-    if (result) result.approximate = false
-  }
-
-  // 4. Fallback: so cidade + estado
-  if (!result && cleanCity) {
-    const q = [cleanCity, cleanState, country].filter(Boolean).join(', ')
-    result = await tryGeocode(q)
-    if (result) result.approximate = true
-  }
-
-  if (result) geocodeCache.set(cacheKey, result)
   return result
 }
 
 export default function DeliveryMap({ address, height = 240 }) {
   const [coords, setCoords] = useState(null)
   const [loading, setLoading] = useState(false)
+  const debounceRef = useRef(null)
 
   const addressKey = useMemo(() =>
     JSON.stringify({ s: address?.street, n: address?.number, c: address?.city, st: address?.state, z: address?.zipCode }),
@@ -97,19 +90,29 @@ export default function DeliveryMap({ address, height = 240 }) {
   )
 
   useEffect(() => {
-    if (!address?.city && !address?.zipCode) {
+    // Limpa qualquer pesquisa pendente do keystroke anterior
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    // Sem dados minimos? Reseta.
+    const hasMinimum = address?.city || (address?.zipCode || '').replace(/\D/g, '').length === 8
+    if (!hasMinimum) {
       setCoords(null)
+      setLoading(false)
       return
     }
-    let cancelled = false
+
+    // Debounce 800ms — so geocodifica quando o usuario parar de digitar
     setLoading(true)
-    geocodeAddress(address).then(result => {
-      if (!cancelled) {
+    debounceRef.current = setTimeout(() => {
+      geocodeAddress(address).then(result => {
         setCoords(result)
         setLoading(false)
-      }
-    })
-    return () => { cancelled = true }
+      })
+    }, 800)
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
   }, [addressKey])
 
   if (loading) {

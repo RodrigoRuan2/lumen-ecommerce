@@ -16,25 +16,27 @@ export const getProducts = async (req, res) => {
     }
 
     const { data, error } = await db.listProducts({ category, search })
-    if (error) {
-      // Fallback para mock
-      let filtered = mockProducts
-      if (category) filtered = filtered.filter(p => p.category === category)
-      if (search) {
-        const s = search.toLowerCase()
-        filtered = filtered.filter(p => p.name.toLowerCase().includes(s) || p.description.toLowerCase().includes(s))
-      }
-      return res.json({ success: true, products: filtered, fallback: true })
+
+    // Mocks filtrados pelos mesmos criterios
+    let filteredMocks = mockProducts
+    if (category) filteredMocks = filteredMocks.filter(p => p.category === category)
+    if (search) {
+      const s = search.toLowerCase()
+      filteredMocks = filteredMocks.filter(p =>
+        p.name.toLowerCase().includes(s) || p.description.toLowerCase().includes(s)
+      )
     }
 
-    // Combina produtos do Supabase com mock (se DB estiver vazio)
-    let products = data
-    if (products.length === 0 && !category && !search) {
-      products = mockProducts
-    } else if (!category && !search) {
-      // Mostra mock + cadastrados no DB
-      products = [...data, ...mockProducts.filter(m => !data.find(d => d.name === m.name))]
+    if (error) {
+      // DB indisponivel — retorna apenas mocks
+      return res.json({ success: true, products: filteredMocks, fallback: true })
     }
+
+    // Combina DB + mocks (deduplicado por nome) — vale com OU sem filtro
+    const products = [
+      ...data,
+      ...filteredMocks.filter(m => !data.find(d => d.name === m.name))
+    ]
 
     if (!category && !search) {
       cache.products = products

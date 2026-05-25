@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
 import orderRoutes from './routes/orders.js';
 import adminRoutes from './routes/admin.js';
+import geocodeRoutes from './routes/geocode.js';
 
 // Load environment variables immediately
 dotenv.config();
@@ -55,6 +56,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/geocode', geocodeRoutes);
 
 // Tratamento de erros — log compacto sem expor request body/headers
 app.use((err, req, res, next) => {
