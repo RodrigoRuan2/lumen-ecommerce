@@ -15,6 +15,16 @@ export function formatCEP(value) {
   return `${digits.slice(0, 5)}-${digits.slice(5)}`
 }
 
+// Permite apenas letras (com acentos), espacos, hifen, ponto e apostrofo (Sao Joao, D'Almeida etc)
+export function sanitizeName(value) {
+  return (value || '').replace(/[^A-Za-zÀ-ſ\s'.-]/g, '').slice(0, 80)
+}
+
+// Estado: apenas 2 letras maiusculas
+export function sanitizeUF(value) {
+  return (value || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2)
+}
+
 // Capitalizar — primeira letra de cada palavra
 export function capitalize(value) {
   if (!value) return ''

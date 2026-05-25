@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../services/api.js'
 import EmailInput from '../components/EmailInput.jsx'
+import PasswordInput from '../components/PasswordInput.jsx'
 import '../styles/Auth.css'
 
 export default function Register() {
@@ -138,25 +139,25 @@ export default function Register() {
 
           <div className="form-group">
             <label>Senha</label>
-            <input
-              type="password"
+            <PasswordInput
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="Mínimo 8 caracteres, com letra e número"
               required
+              autoComplete="new-password"
             />
           </div>
 
           <div className="form-group">
             <label>Confirmar Senha</label>
-            <input
-              type="password"
+            <PasswordInput
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Repita a senha"
               required
+              autoComplete="new-password"
             />
           </div>
 

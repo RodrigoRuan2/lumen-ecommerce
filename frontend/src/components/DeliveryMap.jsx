@@ -19,41 +19,72 @@ const customIcon = L.divIcon({
 // Cache simples para não geocodificar o mesmo endereço duas vezes
 const geocodeCache = new Map()
 
-async function geocodeAddress({ street, city, state, zipCode, country = 'Brasil' }) {
-  const query = [street, city, state, zipCode, country].filter(Boolean).join(', ')
-  if (!query) return null
-
-  if (geocodeCache.has(query)) return geocodeCache.get(query)
-
+async function tryGeocode(query) {
   try {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=br`
-    const res = await fetch(url, {
-      headers: { 'Accept-Language': 'pt-BR' }
-    })
+    const res = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } })
     const data = await res.json()
-    if (!data?.length) {
-      // Tenta novamente só com cidade/estado se não achou endereço completo
-      const fallback = [city, state, country].filter(Boolean).join(', ')
-      if (fallback !== query) {
-        const res2 = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fallback)}&limit=1&countrycodes=br`,
-          { headers: { 'Accept-Language': 'pt-BR' } }
-        )
-        const data2 = await res2.json()
-        if (data2?.[0]) {
-          const coords = { lat: parseFloat(data2[0].lat), lng: parseFloat(data2[0].lon), approximate: true }
-          geocodeCache.set(query, coords)
-          return coords
-        }
-      }
-      return null
-    }
-    const coords = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), approximate: false }
-    geocodeCache.set(query, coords)
-    return coords
+    if (data?.[0]) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }
   } catch {
-    return null
+    /* ignora */
   }
+  return null
+}
+
+// Tenta encontrar a localizacao mais precisa possivel:
+// 1. street + number + city + state (mais preciso)
+// 2. street + city + state (sem numero)
+// 3. CEP isolado (Brasil tem boa cobertura por CEP)
+// 4. cidade + estado (fallback aproximado)
+async function geocodeAddress({ street, number, city, state, zipCode, country = 'Brasil' }) {
+  const cacheKey = JSON.stringify({ street, number, city, state, zipCode })
+  if (geocodeCache.has(cacheKey)) return geocodeCache.get(cacheKey)
+
+  const cleanStreet = (street || '').trim()
+  const cleanNumber = (number || '').trim()
+  const cleanCity = (city || '').trim()
+  const cleanState = (state || '').trim()
+  const cleanCEP = (zipCode || '').trim()
+
+  if (!cleanStreet && !cleanCity && !cleanCEP) return null
+
+  let result = null
+
+  // 1. Mais preciso: rua + numero + cidade + estado
+  if (cleanStreet && cleanCity) {
+    const q = [
+      cleanStreet + (cleanNumber ? ', ' + cleanNumber : ''),
+      cleanCity,
+      cleanState,
+      country
+    ].filter(Boolean).join(', ')
+    result = await tryGeocode(q)
+    if (result) result.approximate = false
+  }
+
+  // 2. Sem numero: rua + cidade + estado
+  if (!result && cleanStreet && cleanCity) {
+    const q = [cleanStreet, cleanCity, cleanState, country].filter(Boolean).join(', ')
+    result = await tryGeocode(q)
+    if (result) result.approximate = false
+  }
+
+  // 3. Pelo CEP (Nominatim suporta postalcode no Brasil em casos comuns)
+  if (!result && cleanCEP && cleanCEP.replace(/\D/g, '').length === 8) {
+    const q = cleanCEP + ', ' + country
+    result = await tryGeocode(q)
+    if (result) result.approximate = false
+  }
+
+  // 4. Fallback: so cidade + estado
+  if (!result && cleanCity) {
+    const q = [cleanCity, cleanState, country].filter(Boolean).join(', ')
+    result = await tryGeocode(q)
+    if (result) result.approximate = true
+  }
+
+  if (result) geocodeCache.set(cacheKey, result)
+  return result
 }
 
 export default function DeliveryMap({ address, height = 240 }) {
@@ -61,7 +92,7 @@ export default function DeliveryMap({ address, height = 240 }) {
   const [loading, setLoading] = useState(false)
 
   const addressKey = useMemo(() =>
-    JSON.stringify({ s: address?.street, c: address?.city, st: address?.state, z: address?.zipCode }),
+    JSON.stringify({ s: address?.street, n: address?.number, c: address?.city, st: address?.state, z: address?.zipCode }),
     [address]
   )
 
@@ -100,31 +131,32 @@ export default function DeliveryMap({ address, height = 240 }) {
   }
 
   return (
-    <div className="delivery-map-wrapper" style={{ height }}>
-      <MapContainer
-        center={[coords.lat, coords.lng]}
-        zoom={coords.approximate ? 13 : 16}
-        scrollWheelZoom={false}
-        style={{ height: '100%', width: '100%', borderRadius: 'var(--border-radius)' }}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={[coords.lat, coords.lng]} icon={customIcon}>
-          <Popup>
-            <strong>Entrega aqui</strong><br />
-            {address.street && <>{address.street}<br /></>}
-            {address.city} - {address.state}<br />
-            {address.zipCode && <small>CEP: {address.zipCode}</small>}
-            {coords.approximate && <><br /><em>📌 Localização aproximada</em></>}
-          </Popup>
-        </Marker>
-      </MapContainer>
+    <div className="delivery-map-container">
+      <div className="delivery-map-wrapper" style={{ height }}>
+        <MapContainer
+          center={[coords.lat, coords.lng]}
+          zoom={coords.approximate ? 13 : 16}
+          scrollWheelZoom={false}
+          style={{ height: '100%', width: '100%', borderRadius: 'var(--border-radius)' }}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={[coords.lat, coords.lng]} icon={customIcon}>
+            <Popup>
+              <strong>Entrega aqui</strong><br />
+              {address.street && <>{address.street}<br /></>}
+              {address.city} - {address.state}<br />
+              {address.zipCode && <small>CEP: {address.zipCode}</small>}
+            </Popup>
+          </Marker>
+        </MapContainer>
+      </div>
       {coords.approximate && (
-        <div className="map-approximate-warning">
-          Localização aproximada (rua não encontrada)
-        </div>
+        <p className="map-approximate-hint">
+          📍 Localização aproximada — não conseguimos encontrar a rua exata
+        </p>
       )}
     </div>
   )

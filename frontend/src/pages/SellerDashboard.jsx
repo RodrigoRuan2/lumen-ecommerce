@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../services/api.js'
-import { capitalize, formatCEP, fetchAddressByCEP } from '../utils/formatters.js'
+import { capitalize, formatCEP, fetchAddressByCEP, sanitizeName, sanitizeUF } from '../utils/formatters.js'
 import DeliveryMap from '../components/DeliveryMap.jsx'
 import Icon from '../components/Icon.jsx'
 import '../styles/Dashboard.css'
@@ -413,7 +413,7 @@ export default function SellerDashboard() {
                 <input
                   type="text"
                   value={store.city}
-                  onChange={e => setStore({ ...store, city: e.target.value })}
+                  onChange={e => setStore({ ...store, city: sanitizeName(e.target.value) })}
                 />
               </div>
               <div className="form-group">
@@ -421,7 +421,7 @@ export default function SellerDashboard() {
                 <input
                   type="text"
                   value={store.state}
-                  onChange={e => setStore({ ...store, state: e.target.value.toUpperCase() })}
+                  onChange={e => setStore({ ...store, state: sanitizeUF(e.target.value) })}
                   maxLength={2}
                   style={{ textTransform: 'uppercase' }}
                 />

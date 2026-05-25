@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import api from '../services/api.js'
-import { formatCEP, fetchAddressByCEP, detectCardBrand } from '../utils/formatters.js'
+import { formatCEP, fetchAddressByCEP, detectCardBrand, sanitizeName, sanitizeUF } from '../utils/formatters.js'
 import { calculateShipping, PIX_DISCOUNT } from '../utils/pricing.js'
 import DeliveryMap from '../components/DeliveryMap.jsx'
 import Icon from '../components/Icon.jsx'
@@ -233,6 +233,16 @@ export default function Checkout() {
           {step === 0 && (
             <div className="checkout-card">
               <h2>Endereço de Entrega</h2>
+
+              {Object.keys(errors).length > 0 && (
+                <div className="form-error-banner">
+                  <strong>Revise os campos destacados:</strong>
+                  <ul>
+                    {Object.values(errors).map((msg, i) => <li key={i}>{msg}</li>)}
+                  </ul>
+                </div>
+              )}
+
               <div className="form-group">
                 <label>CEP {cepLoading && <span className="cep-loading">buscando endereço...</span>}</label>
                 <input
@@ -242,6 +252,8 @@ export default function Checkout() {
                   placeholder="01234-567"
                   inputMode="numeric"
                   maxLength={9}
+                  className={errors.zipCode ? 'input-error' : ''}
+                  aria-invalid={!!errors.zipCode}
                 />
                 <small className="form-hint">Digite o CEP que preenchemos o resto automaticamente</small>
                 {errors.zipCode && <span className="field-error">{errors.zipCode}</span>}
@@ -254,6 +266,8 @@ export default function Checkout() {
                     value={address.street}
                     onChange={e => setAddress({ ...address, street: e.target.value })}
                     placeholder="Rua das Flores"
+                    className={errors.street ? 'input-error' : ''}
+                    aria-invalid={!!errors.street}
                   />
                   {errors.street && <span className="field-error">{errors.street}</span>}
                 </div>
@@ -264,7 +278,10 @@ export default function Checkout() {
                     value={address.number}
                     onChange={e => setAddress({ ...address, number: e.target.value })}
                     placeholder="123"
+                    className={errors.number ? 'input-error' : ''}
+                    aria-invalid={!!errors.number}
                   />
+                  {errors.number && <span className="field-error">{errors.number}</span>}
                 </div>
               </div>
               <div className="form-row">
@@ -302,8 +319,10 @@ export default function Checkout() {
                   <input
                     type="text"
                     value={address.city}
-                    onChange={e => setAddress({ ...address, city: e.target.value })}
+                    onChange={e => setAddress({ ...address, city: sanitizeName(e.target.value) })}
                     placeholder="São Paulo"
+                    className={errors.city ? 'input-error' : ''}
+                    aria-invalid={!!errors.city}
                   />
                   {errors.city && <span className="field-error">{errors.city}</span>}
                 </div>
@@ -312,10 +331,12 @@ export default function Checkout() {
                   <input
                     type="text"
                     value={address.state}
-                    onChange={e => setAddress({ ...address, state: e.target.value.toUpperCase() })}
+                    onChange={e => setAddress({ ...address, state: sanitizeUF(e.target.value) })}
                     placeholder="SP"
                     maxLength={2}
                     style={{ textTransform: 'uppercase' }}
+                    className={errors.state ? 'input-error' : ''}
+                    aria-invalid={!!errors.state}
                   />
                   {errors.state && <span className="field-error">{errors.state}</span>}
                 </div>

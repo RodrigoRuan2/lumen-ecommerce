@@ -79,20 +79,18 @@ body.theme-dark .map-pin-wrapper svg {
   margin: 0;
 }
 
-.map-approximate-warning {
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-  right: 8px;
-  background: rgba(217, 119, 6, 0.95);
-  color: white;
-  padding: 6px 12px;
-  border-radius: var(--border-radius);
+.delivery-map-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.map-approximate-hint {
   font-size: 0.75rem;
-  font-weight: 500;
+  color: var(--muted-color);
   text-align: center;
-  z-index: 1000;
-  pointer-events: none;
+  font-style: italic;
+  margin: 0;
 }
 
 /* Esconde os controles de zoom padrão e usa estilo limpo */

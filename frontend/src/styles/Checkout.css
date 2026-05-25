@@ -139,6 +139,58 @@
   color: var(--danger-color);
   font-size: 0.8rem;
   margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.field-error::before {
+  content: '⚠';
+  font-size: 0.9rem;
+}
+
+.input-error {
+  border-color: var(--danger-color) !important;
+  background: rgba(220, 38, 38, 0.04) !important;
+}
+
+.input-error:focus {
+  border-color: var(--danger-color) !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+}
+
+.form-error-banner {
+  background: rgba(220, 38, 38, 0.06);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  color: var(--danger-color);
+  padding: 14px 16px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+  font-size: 0.88rem;
+}
+
+.form-error-banner strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.form-error-banner ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.form-error-banner li {
+  padding: 3px 0 3px 16px;
+  position: relative;
+  color: var(--text-secondary);
+}
+
+.form-error-banner li::before {
+  content: '•';
+  position: absolute;
+  left: 4px;
+  color: var(--danger-color);
 }
 
 .payment-methods {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../services/api.js'
-import { formatPhone, formatCEP, fetchAddressByCEP } from '../utils/formatters.js'
+import { formatPhone, formatCEP, fetchAddressByCEP, sanitizeName, sanitizeUF } from '../utils/formatters.js'
 import DeliveryMap from '../components/DeliveryMap.jsx'
 import Icon from '../components/Icon.jsx'
 import '../styles/Profile.css'
@@ -108,11 +108,28 @@ function OrderCard({ order, onStatusChange }) {
 
 export default function Profile() {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const [tab, setTab] = useState(() => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [tab, setTabState] = useState(() => {
     const t = searchParams.get('tab')
     return ['perfil', 'pedidos', 'endereco'].includes(t) ? t : 'perfil'
   })
+
+  // Mantem a tab sincronizada com o ?tab= da URL (em ambos os sentidos)
+  useEffect(() => {
+    const t = searchParams.get('tab')
+    const normalized = ['perfil', 'pedidos', 'endereco'].includes(t) ? t : 'perfil'
+    if (normalized !== tab) setTabState(normalized)
+  }, [searchParams])
+
+  // Wrapper: ao trocar de tab, atualiza tambem a URL pra refletir o estado
+  const setTab = (newTab) => {
+    setTabState(newTab)
+    if (newTab === 'perfil') {
+      setSearchParams({}, { replace: true })
+    } else {
+      setSearchParams({ tab: newTab }, { replace: true })
+    }
+  }
   const [profile, setProfile] = useState({ name: '', email: '', phone: '', address: { zipCode: '', street: '', number: '', complement: '', neighborhood: '', buildingName: '', city: '', state: '', country: '' } })
   const [fullAddress, setFullAddress] = useState({}) // preserva sub-campos (savedCard, store, sellerApplication)
   const [sellerApplication, setSellerApplication] = useState(null)
@@ -190,7 +207,10 @@ export default function Profile() {
     }
     if (name.startsWith('address.')) {
       const field = name.split('.')[1]
-      setProfile(prev => ({ ...prev, address: { ...prev.address, [field]: value } }))
+      let v = value
+      if (field === 'city') v = sanitizeName(value)
+      else if (field === 'state') v = sanitizeUF(value)
+      setProfile(prev => ({ ...prev, address: { ...prev.address, [field]: v } }))
     } else {
       setProfile(prev => ({ ...prev, [name]: value }))
     }

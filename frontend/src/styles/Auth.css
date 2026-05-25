@@ -178,6 +178,40 @@
   cursor: not-allowed;
 }
 
+/* Password input com toggle de visibilidade */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 44px; /* espaco pro botao do olho */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--muted-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+
+.password-toggle:hover {
+  color: var(--text-color);
+  background: var(--section-color);
+}
+
 .seller-notice {
   background: rgba(245, 158, 11, 0.08);
   border: 1px solid rgba(245, 158, 11, 0.3);

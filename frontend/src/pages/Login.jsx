@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../services/api.js'
 import EmailInput from '../components/EmailInput.jsx'
+import PasswordInput from '../components/PasswordInput.jsx'
 import '../styles/Auth.css'
 
 export default function Login() {
@@ -53,8 +54,7 @@ export default function Login() {
 
           <div className="form-group">
             <label>Senha</label>
-            <input
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

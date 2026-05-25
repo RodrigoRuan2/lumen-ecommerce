@@ -154,11 +154,40 @@ function pickFields(obj, allowed, maxLen = 120) {
   return out
 }
 
+// Validacao basica de campos antes de salvar
+function validateAddressFields(addr) {
+  if (!addr || typeof addr !== 'object') return null
+  // CEP: 8 digitos (com ou sem hifen)
+  if (addr.zipCode) {
+    const cep = String(addr.zipCode).replace(/\D/g, '')
+    if (cep.length > 0 && cep.length !== 8) return 'CEP precisa ter 8 digitos'
+  }
+  // Estado: 2 letras
+  if (addr.state) {
+    const uf = String(addr.state).trim()
+    if (uf.length > 0 && !/^[A-Za-z]{2}$/.test(uf)) return 'Estado precisa ter 2 letras (UF)'
+  }
+  // Cidade: apenas letras, espacos, hifen, apostrofo, ponto
+  if (addr.city) {
+    const city = String(addr.city).trim()
+    if (city.length > 0 && !/^[A-Za-zÀ-ſ\s'.-]+$/.test(city)) return 'Cidade so pode conter letras'
+  }
+  return null
+}
+
 function sanitizeAddressInput(input, existingAddress = {}) {
   if (!input || typeof input !== 'object') return existingAddress
 
   // Campos pessoais editáveis
   const sanitized = pickFields(input, ADDRESS_PERSONAL_FIELDS) || {}
+
+  // Normalizacoes: CEP so digitos formatado, UF maiuscula, cidade trim
+  if (sanitized.zipCode) {
+    const cep = sanitized.zipCode.replace(/\D/g, '').slice(0, 8)
+    sanitized.zipCode = cep.length === 8 ? `${cep.slice(0, 5)}-${cep.slice(5)}` : cep
+  }
+  if (sanitized.state) sanitized.state = sanitized.state.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2)
+  if (sanitized.city) sanitized.city = sanitized.city.replace(/[^A-Za-zÀ-ſ\s'.-]/g, '').trim().slice(0, 80)
 
   // savedCard: apenas last4 (4 dígitos), brand, holderName, expiry
   if (input.savedCard && typeof input.savedCard === 'object') {
@@ -199,6 +228,11 @@ export const updateProfile = async (req, res) => {
     if (typeof phone === 'string') updates.phone = phone.slice(0, 20)
 
     if (address !== undefined) {
+      // Valida primeiro o que veio do cliente
+      const validationError = validateAddressFields(address)
+      if (validationError) {
+        return res.status(400).json({ success: false, message: validationError })
+      }
       // Busca o estado atual para preservar campos controlados pelo servidor
       const { data: current } = await getProfileById(req.user.id)
       updates.address = sanitizeAddressInput(address, current?.address || {})
