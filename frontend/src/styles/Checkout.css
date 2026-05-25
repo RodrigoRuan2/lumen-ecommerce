@@ -11,34 +11,43 @@
 
 .step {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
   position: relative;
   color: var(--muted-color);
 }
 
+/* Linha conectando os steps — alinhada ao centro vertical do circulo (18px) */
 .step::after {
   content: '';
   position: absolute;
-  right: 0;
-  top: 18px;
-  width: calc(100% - 80px);
-  height: 1px;
+  top: 17px;
+  left: calc(50% + 24px);
+  right: calc(-50% + 24px);
+  height: 2px;
   background: var(--border-color);
   z-index: 0;
-  left: 60px;
 }
 
 .step:last-child::after {
   display: none;
 }
 
+/* Linha preenchida quando step esta concluido */
+.step.done::after {
+  background: var(--text-color);
+}
+
 .step-num {
+  position: relative;
+  z-index: 1;
   width: 36px;
   height: 36px;
   border-radius: 50%;
   border: 1px solid var(--border-color);
+  background: var(--bg-color);
   display: flex;
   align-items: center;
   justify-content: center;

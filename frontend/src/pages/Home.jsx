@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import Icon from '../components/Icon'
+import HangingLamp from '../components/HangingLamp'
 import { SkeletonGrid } from '../components/Skeleton'
 import { FREE_SHIPPING_MIN } from '../utils/pricing.js'
 import '../styles/Home.css'
@@ -53,6 +54,7 @@ export default function Home() {
       {!search && (
         <section className="hero">
           <div className="hero-gradient" aria-hidden="true" />
+          <HangingLamp />
           <div className="hero-content">
             <span className="hero-eyebrow">CURADORIA PREMIUM</span>
             <h1 className="hero-title">
